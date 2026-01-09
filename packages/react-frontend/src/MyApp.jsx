@@ -1,5 +1,6 @@
 // src/MyApp.jsx
 import React from "react"; //Import React
+import Table from "./Table"; //Import Table from Table.jsx
 
 //Define the MyApp component as a function
 function MyApp() {
@@ -8,7 +9,9 @@ function MyApp() {
     //THE Element can be a nested structure like in the example below:
   return (
     <div>
-      <h1>Hello, React!</h1>
+      <div className= "containter"> 
+        <Table />
+      </div>
     </div>
   );
 }
