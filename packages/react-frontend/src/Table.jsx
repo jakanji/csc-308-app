@@ -12,34 +12,30 @@ function TableHeader(){
     );
 }
 
-function TableBody(){
+function TableBody(props){ //prop is used to access data passed from parent component (MyApp)
+    console.log(props.characterData);
+  const rows = props.characterData.map((row, index) =>{
+        return (
+            <tr> 
+                <td>{row.name}</td>
+                <td>{row.job}</td>
+            </tr>
+        );
+      }
+    );
+
     return(
         <tbody>
-            <tr>
-                <td>Charlie</td>
-                <td>Janitor</td>
-            </tr>
-            <tr>
-                <td>Mac</td>
-                <td>Bouncer</td>
-            </tr>
-               <tr>
-                <td>Dee</td>
-                <td>Aspiring actress</td>
-            </tr>
-            <tr>
-                <td>Dennis</td>
-                <td>Bartender</td>
-            </tr>
+            {rows}
         </tbody>
     );
 }
 
-function Table(){
+function Table(props){ //props let's us pass data through parent component (MyApp) to child component (Table)
     return (
         <table>
             <TableHeader />
-            <TableBody />
+            <TableBody characterData= {props.characterData} />
         </table>
     );
 }
