@@ -7,6 +7,7 @@ function TableHeader(){
             <tr>
                 <td>Name</td>
                 <td>Job</td>
+                <td>Delete</td>
             </tr>
         </thead>
     );
@@ -16,9 +17,14 @@ function TableBody(props){ //prop is used to access data passed from parent comp
     console.log(props.characterData);
   const rows = props.characterData.map((row, index) =>{
         return (
-            <tr> 
+            <tr key={index}> 
                 <td>{row.name}</td>
                 <td>{row.job}</td>
+                <td>
+                    <button onClick= {() => props.removeCharacter(index)}>
+                        Delete
+                    </button>
+                </td>
             </tr>
         );
       }
@@ -35,7 +41,10 @@ function Table(props){ //props let's us pass data through parent component (MyAp
     return (
         <table>
             <TableHeader />
-            <TableBody characterData= {props.characterData} />
+            <TableBody 
+                characterData= {props.characterData}
+                removeCharacter= {props.removeCharacter}
+            />
         </table>
     );
 }
