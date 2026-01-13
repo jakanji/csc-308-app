@@ -11,8 +11,9 @@ function MyApp() {
   const [characters, setCharacters] = useState([  ]);
 
   function updateList(person){
-    setCharacters([characters, person]);
+    setCharacters([...characters, person]);
   }
+
   //difining removeOnecharacter here lets us be right ins cope to refer to characters and setCharacters
   function removeOneCharacter(index){
     //filter creates a new array with the elements that pass a given test

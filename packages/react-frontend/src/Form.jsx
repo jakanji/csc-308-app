@@ -2,8 +2,6 @@
 //The goal of Form is to update the state when a field is changed nad pass the data to MyApp, updating the table
 import React, {useState} from "react";
 
-
-
 function Form(props){
     const [person, setPerson] =useState(
         {
@@ -11,7 +9,7 @@ function Form(props){
             job: ""
         }
     );
-
+    
     function handleChange(event){
         const{name, value} = event.target;
         if (name === "job")
@@ -20,10 +18,8 @@ function Form(props){
     }  
 
     function submitForm(){
-        setPerson(
-            {name: "",job: ""}
-        );        
         props.handleSubmit(person);
+        setPerson({name: "",job: ""});        
     }
 
     return(
