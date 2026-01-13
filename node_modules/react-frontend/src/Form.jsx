@@ -4,7 +4,7 @@ import React, {useState} from "react";
 
 
 
-function Form(){
+function Form(props){
     const [person, setPerson] =useState(
         {
             name: "",
@@ -18,6 +18,13 @@ function Form(){
             setPerson({name: person["name"], job: value});
         else setPerson({name: value, job: person["job"]});
     }  
+
+    function submitForm(){
+        setPerson(
+            {name: "",job: ""}
+        );        
+        props.handleSubmit(person);
+    }
 
     return(
         <form>
@@ -37,8 +44,8 @@ function Form(){
                 value={person.job}
                 onChange={handleChange}
             />
+            <input type="button" value="Submit" onClick={submitForm}/>
         </form>
-
     );
 }
 

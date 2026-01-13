@@ -8,10 +8,11 @@ function MyApp() {
     //MyApp returns what is supposed to be rendered on the screen.
     //React functional components must return an element to be rendered on the screen
     //The Element can be a nested structure like in the example below:
-  const [characters, setCharacters] = useState([
+  const [characters, setCharacters] = useState([  ]);
 
-  ]);
-
+  function updateList(person){
+    setCharacters([characters, person]);
+  }
   //difining removeOnecharacter here lets us be right ins cope to refer to characters and setCharacters
   function removeOneCharacter(index){
     //filter creates a new array with the elements that pass a given test
@@ -31,7 +32,7 @@ function MyApp() {
           characterData= {characters}
           removeCharacter={removeOneCharacter}
         />
-        <Form />
+        <Form handleSubmit={updateList}/>
       </div>
   );
 }
