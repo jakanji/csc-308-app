@@ -1,6 +1,7 @@
 // src/MyApp.jsx
 import React, {useState} from "react"; //Import React
 import Table from "./Table"; //Import Table from Table.jsx
+import Form from "./Form";
 
 //Define the MyApp component as a function
 function MyApp() {
@@ -8,22 +9,7 @@ function MyApp() {
     //React functional components must return an element to be rendered on the screen
     //The Element can be a nested structure like in the example below:
   const [characters, setCharacters] = useState([
-      {
-            name: "Charlie",
-            job: "Janitor"
-      },
-      {
-        name: "Mac",
-        job: "Bouncer"
-      },
-      {
-        name: "Dee",
-        job: "Aspring actress"
-      },
-      {
-        name: "Dennis",
-        job: "Bartender"
-      }
+
   ]);
 
   //difining removeOnecharacter here lets us be right ins cope to refer to characters and setCharacters
@@ -45,6 +31,7 @@ function MyApp() {
           characterData= {characters}
           removeCharacter={removeOneCharacter}
         />
+        <Form />
       </div>
   );
 }
