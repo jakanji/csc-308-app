@@ -34,6 +34,18 @@ const users = {
     ]
 };
 
+const findUsersByName = (name) => {
+    return users["users_list"].filter(
+        (user) => user["name"] === name
+    );
+};
+
+const findUsersById = (id) => {
+    return users['users_list'].filter(
+        (id) => users['id'] === id
+    );
+};
+
 //setup app to process incoming data in JSON format
 app.use(express.json());
 
@@ -47,7 +59,19 @@ app.get("/", (req, res) => { //first argument represents the request; second arg
 });
 
 app.get("/users", (req, res)=>{
+    const name = req.query.name;
+    const id = req.query.id;
+    if (name != undefined){
+        let result = findUsersByName(name);
+        //result = {users_list:result};
+        res.send(result);
+    } else if (id != undefined){
+        let result = findUsersById(id);
+        res.send(result);
+    }
+     else {
     res.send(users);
+    }
 });
 
 
