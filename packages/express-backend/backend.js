@@ -40,11 +40,8 @@ const findUsersByName = (name) => {
     );
 };
 
-const findUsersById = (id) => {
-    return users['users_list'].filter(
-        (id) => users['id'] === id
-    );
-};
+const findUsersById = (id) => 
+    users["users_list"].find((user) => user["id"]===id);
 
 //setup app to process incoming data in JSON format
 app.use(express.json());
@@ -65,15 +62,22 @@ app.get("/users", (req, res)=>{
         let result = findUsersByName(name);
         //result = {users_list:result};
         res.send(result);
-    } else if (id != undefined){
-        let result = findUsersById(id);
-        res.send(result);
     }
      else {
     res.send(users);
     }
 });
 
+app.get("/users/:id", (req, res) => {
+    const id = req.params.id;
+    console.log(id);
+    let result = findUsersById(id);
+    if (result === undefined){
+        res.status(404).send("Resource not found.");
+    } else{
+        res.send(result);
+    }
+});
 
 app.listen(port, () =>{
     console.log(
