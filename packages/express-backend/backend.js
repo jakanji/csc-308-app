@@ -9,7 +9,12 @@ const port = 8000; //port number we'll use to listen to incoming HTTP requests
 //setup app to process incoming data in JSON format
 app.use(express.json());
 
-app.get("/", (req, res) => {
+//Set API endpoint with .get
+//First argument ("/") is the URL pattern that will map to this endpoint
+//Second argument is the callback function that will be called when our server
+//receives an incoming GET request mathcing the / URL patter
+app.get("/", (req, res) => {//first argument represents the request; second argument represents the response
+
     res.send("Hello World!");
 });
 
