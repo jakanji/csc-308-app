@@ -40,8 +40,13 @@ const findUsersByName = (name) => {
     );
 };
 
-const findUsersById = (id) => 
-    users["users_list"].find((user) => user["id"]===id);
+const findUsersById = (id) => users["users_list"].find((user) => user["id"]===id);
+
+const addUser = (user) => {
+    users["users_list"].push(user);
+    console.log(user);
+    return user;
+};
 
 //setup app to process incoming data in JSON format
 app.use(express.json());
@@ -77,6 +82,12 @@ app.get("/users/:id", (req, res) => {
     } else{
         res.send(result);
     }
+});
+
+app.post("/users", (req, res)=> {
+    const user = req.body;
+    addUser(user);
+    res.send();
 });
 
 app.listen(port, () =>{
