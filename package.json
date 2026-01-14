@@ -11,6 +11,6 @@
     "dev": "npm run dev --prefix packages/react-frontend"
   },
   "workspaces":[
-    "packages/*"
+    "packages/react-frontend"
   ]
 }
