@@ -1,11 +1,11 @@
 //backend.js
-import express from "express"; //Express works as an HTTP middleware, 
+import express, { response } from "express"; //Express works as an HTTP middleware, 
 // dispatching HTTP calls to the routes we define and sending back responses
 
 
 const app = express();
 const port = 8000; //port number we'll use to listen to incoming HTTP requests
-const users = {
+let users = {
     users_list: [
         {
         id: "xyz789",
@@ -48,6 +48,18 @@ const addUser = (user) => {
     return user;
 };
 
+const deleteUser = (id)=> {
+    let findUser = findUsersById(id);
+    console.log(findUser)
+    if (findUser !== undefined){
+        users= users["users_list"].filter(
+            (user) => user["id"] !== id
+        );
+        return(users);
+    }else
+        return undefined;
+};
+
 //setup app to process incoming data in JSON format
 app.use(express.json());
 
@@ -84,10 +96,41 @@ app.get("/users/:id", (req, res) => {
     }
 });
 
+//app.get("/users/:id", async (req, res) => {
+//    promise = new Promise(
+//        (fulfill, reject) => {
+//            let result = findUsersById(id);
+//            if (result === undefined){
+//                reject(res.status);
+//            }else fulfill(result);
+//        }
+//    )
+//    promise.then(
+//        (resultFred) => {
+//            res.send(resultFred);}
+//        ).catch (
+//            (errCode) =>{
+//                res.status(errCode).send("");
+//            }
+//        )
+//            
+//});
+
 app.post("/users", (req, res)=> {
     const user = req.body;
     addUser(user);
     res.send();
+});
+
+app.delete("/users/:id", (req, res) =>{
+    const userid = req.params.id
+    console.log(userid);
+    let result = deleteUser(userid);
+    if (deleteUser !== undefined){
+        res.status(200).send(result);
+    }else {
+        res.status(404).send("User not found.");
+    }
 });
 
 app.listen(port, () =>{
