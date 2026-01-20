@@ -43,14 +43,13 @@ const addUser = (user) => {
     //     id = Math.random() * 9999 //try again if the id exists
     //     count++;
     // }; 
-    user["id"]= (`${id.toFixed(0)}`);
-    users["users_list"].push({
+    const newUser= {
         "id": id.toFixed(0),
         "name": user["name"],
-        "job": user["job"],
-        });
-    console.log(users["users_list"]);
-    return user;
+        "job": user["job"],       
+    }
+    users["users_list"].push(newUser);
+    return newUser;
 };
 
 const findUsersByName = (name) => {
@@ -101,7 +100,6 @@ app.get("/users", (req, res)=>{
         res.status(200).send(result);
     }
      else {
-    console.log("Sending full list...")
     res.status(404).send(users);
     }
 });
@@ -141,8 +139,9 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res)=> {
     const user = req.body;
     try{
-        addUser(user);
-        res.status(201).send(users["users_list"]);
+        const newUser = addUser(user);
+        console.log("New user added :", newUser);
+        res.status(201).send(newUser);
     }catch (error){
         console.log(error);
         res.status(500).send("Error posting:", error);

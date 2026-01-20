@@ -19,22 +19,35 @@ function MyApp() {
   function updateList(person){
     console.log("attempting update...")
     postUsers(person)
-      .then(response => {//check to see if POST returned the right code
-        if (response.status !== 201){
+      .then(async (response) => {
+        const newUser = await response.json(); //get user with randomly generated id from backend
+        
+        if (response.status !== 201){//check to see if POST returned the right code
           throw new Error(`HTTP error, not 201: ${response.status}`,)
+        }else {
+
+        //update the local data with the user if POST was successful
+        setCharacters([...characters, newUser]);
+        console.log("Update successful: ", newUser);
         }
       })    
-      //update the local data with the user if POST was successful
-      .then(()=> {
-        setCharacters([...characters, person]);
-        console.log("Update successful!")
-      })
       .catch((error)=> {console.log("Error updating!: ", error)});
   }
 
   //difining removeOnecharacter here lets us be right ins cope to refer to characters and setCharacters
   function removeOneCharacter(index){
-    console.log("removing...");
+    //delete from backend...
+    console.log("removing from backend...");
+
+    const promise = fetch(`http//localhost:8000/users/${index}`, {
+    method: "DELETE",
+    headers: {"Content-Type": "application/json"},
+    })
+    .then()
+
+    //delete from frontend...
+    console.log("removing from backend...");
+
     //filter creates a new array with the elements that pass a given test
     const updated = characters.filter(
       //in this case, we return the array without "index"
@@ -43,7 +56,6 @@ function MyApp() {
       }
     );
     setCharacters(updated);
-
   }
 
   function fetchUsers(){
@@ -58,6 +70,14 @@ function MyApp() {
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(person),
       });
+    return promise;
+  }
+
+  function deleteUsers(id){
+    const promise = fetch("http//localhost:8000/users", {
+      method: "DELETE",
+      headers: {"Content-Type": "application/json"},
+    });
     return promise;
   }
 
