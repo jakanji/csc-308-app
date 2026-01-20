@@ -36,6 +36,23 @@ let users = {
     ]
 };
 
+const addUser = (user) => {
+    let id = Math.random() * 999999 //generate a user id
+    // let count = 0;
+    // while (findUsersById(id) !== undefined && count != 100 ){
+    //     id = Math.random() * 9999 //try again if the id exists
+    //     count++;
+    // }; 
+    user["id"]= (`${id.toFixed(0)}`);
+    users["users_list"].push({
+        "id": id.toFixed(0),
+        "name": user["name"],
+        "job": user["job"],
+        });
+    console.log(users["users_list"]);
+    return user;
+};
+
 const findUsersByName = (name) => {
     console.log("finding user by name...")
     return users["users_list"].filter(
@@ -44,12 +61,6 @@ const findUsersByName = (name) => {
 };
 
 const findUsersById = (id) => users["users_list"].find((user) => user["id"]===id);
-
-const addUser = (user) => {
-    users["users_list"].push(user);
-    console.log(user);
-    return user;
-};
 
 const deleteUser = (id)=> {
     let findUser = users["users_list"].find((user) => user["id"]===id);
@@ -90,7 +101,7 @@ app.get("/users", (req, res)=>{
         res.status(200).send(result);
     }
      else {
-    console.log("No query, sending full list...")
+    console.log("Sending full list...")
     res.status(404).send(users);
     }
 });
@@ -133,7 +144,8 @@ app.post("/users", (req, res)=> {
         addUser(user);
         res.status(201).send(users["users_list"]);
     }catch (error){
-        res.status(500).send("Error posting:", error)
+        console.log(error);
+        res.status(500).send("Error posting:", error);
     }
 });
 
