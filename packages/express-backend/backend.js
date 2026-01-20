@@ -49,15 +49,18 @@ const addUser = (user) => {
 };
 
 const deleteUser = (id)=> {
-    let findUser = findUsersById(id);
-    console.log(findUser)
+    let findUser = users["users_list"].find((user) => user["id"]===id);
+        console.log("finding user: ", findUser);
     if (findUser !== undefined){
-        users= users["users_list"].filter(
-            (user) => user["id"] !== id
-        );
-        return(users);
-    }else
+            users["users_list"]= users["users_list"].filter(
+                (user)=> user["id"] !== id
+            );
+            console.log("user deleted!")
+            return(users);
+    } else {
+        console.log("Couldn't find user!");
         return undefined;
+    }
 };
 
 //setup app to process incoming data in JSON format
@@ -86,6 +89,7 @@ app.get("/users", (req, res)=>{
 });
 
 app.get("/users/:id", (req, res) => {
+    console.log("finding user by id...")
     const id = req.params.id;
     console.log(id);
     let result = findUsersById(id);
@@ -124,11 +128,12 @@ app.post("/users", (req, res)=> {
 
 app.delete("/users/:id", (req, res) =>{
     const userid = req.params.id
-    console.log(userid);
+    console.log("attempting to delete: ",userid);
     let result = deleteUser(userid);
-    if (deleteUser !== undefined){
+    console.log("Result: ", result);
+    if (result !== undefined){
         res.status(200).send(result);
-    }else {
+    }else{
         res.status(404).send("User not found.");
     }
 });
