@@ -37,6 +37,7 @@ let users = {
 };
 
 const findUsersByName = (name) => {
+    console.log("finding user by name...")
     return users["users_list"].filter(
         (user) => user["name"] === name
     );
@@ -84,11 +85,13 @@ app.get("/users", (req, res)=>{
     const id = req.query.id;
     if (name != undefined){
         let result = findUsersByName(name);
-        //result = {users_list:result};
-        res.send(result);
+        result = {users_list:result};
+        console.log("user found!")
+        res.status(200).send(result);
     }
      else {
-    res.send(users);
+    console.log("No query, sending full list...")
+    res.status(404).send(users);
     }
 });
 
@@ -126,8 +129,12 @@ app.get("/users/:id", (req, res) => {
 
 app.post("/users", (req, res)=> {
     const user = req.body;
-    addUser(user);
-    res.status(201).send(users["users_list"]);
+    try{
+        addUser(user);
+        res.status(201).send(users["users_list"]);
+    }catch (error){
+        res.status(500).send("Error posting:", error)
+    }
 });
 
 app.delete("/users/:id", (req, res) =>{
