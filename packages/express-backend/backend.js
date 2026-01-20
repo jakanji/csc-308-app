@@ -1,10 +1,12 @@
 //backend.js
 import express, { response } from "express"; //Express works as an HTTP middleware, 
 // dispatching HTTP calls to the routes we define and sending back responses
+import cors from "cors"; //import CORS(Cross-Origine Resource Sharing)
 
 
 const app = express();
 const port = 8000; //port number we'll use to listen to incoming HTTP requests
+
 let users = {
     users_list: [
         {
@@ -63,6 +65,8 @@ const deleteUser = (id)=> {
     }
 };
 
+//setup app to allow Cross-Origin Resource Sharing (allows backend to respond to calls from a different origin (port))
+app.use(cors())
 //setup app to process incoming data in JSON format
 app.use(express.json());
 
