@@ -100,7 +100,7 @@ app.get("/users/:id", (req, res) => {
     if (result === undefined){
         res.status(404).send("Resource not found.");
     } else{
-        res.send(result);
+        res.status(200).send(result);
     }
 });
 
@@ -127,7 +127,7 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res)=> {
     const user = req.body;
     addUser(user);
-    res.send();
+    res.status(201).send(users["users_list"]);
 });
 
 app.delete("/users/:id", (req, res) =>{
@@ -144,6 +144,6 @@ app.delete("/users/:id", (req, res) =>{
 
 app.listen(port, () =>{
     console.log(
-        'Example app listening at http://localhost:8000'
+        `Example app listening at http://localhost:${port}`
     );
 });

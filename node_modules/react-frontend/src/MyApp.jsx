@@ -17,12 +17,19 @@ function MyApp() {
   }, [] );
 
   function updateList(person){
-    console.log("updating...")
-    //if postUsers promise successfully posts the given user to the server...
+    console.log("attempting update...")
     postUsers(person)
-      //...then we update the local data with the same user
-      .then(()=>setCharacters([...characters, person]))
-      .catch((error)=> {console.log("error updating: ", error)});
+      .then(response => {//check to see if POST returned the right code
+        if (response.status !== 201){
+          throw new Error(`HTTP error, not 201: ${response.status}`,)
+        }
+      })    
+      //update the local data with the user if POST was successful
+      .then(()=> {
+        setCharacters([...characters, person]);
+        console.log("Update successful!")
+      })
+      .catch((error)=> {console.log("Error updating!: ", error)});
   }
 
   //difining removeOnecharacter here lets us be right ins cope to refer to characters and setCharacters
@@ -49,7 +56,7 @@ function MyApp() {
     const promise = fetch("http://localhost:8000/users", {
       method: "POST",
       headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(person),
+      body: JSON.stringify(person),
       });
     return promise;
   }
