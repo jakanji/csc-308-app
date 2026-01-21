@@ -63,7 +63,7 @@ const findUsersById = (id) => users["users_list"].find((user) => user["id"]===id
 
 const deleteUser = (id)=> {
     let findUser = users["users_list"].find((user) => user["id"]===id);
-        console.log("finding user: ", findUser);
+    console.log("finding user: ", findUser);
     if (findUser !== undefined){
             users["users_list"]= users["users_list"].filter(
                 (user)=> user["id"] !== id
@@ -100,7 +100,7 @@ app.get("/users", (req, res)=>{
         res.status(200).send(result);
     }
      else {
-    res.status(404).send(users);
+    res.send(users);
     }
 });
 
@@ -154,7 +154,7 @@ app.delete("/users/:id", (req, res) =>{
     let result = deleteUser(userid);
     console.log("Result: ", result);
     if (result !== undefined){
-        res.status(200).send(result);
+        res.status(204).send(users["users_list"]);
     }else{
         res.status(404).send("User not found.");
     }

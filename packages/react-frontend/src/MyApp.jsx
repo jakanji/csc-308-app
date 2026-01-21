@@ -39,23 +39,23 @@ function MyApp() {
     //delete from backend...
     console.log("removing from backend...");
 
-    const promise = fetch(`http//localhost:8000/users/${index}`, {
-    method: "DELETE",
-    headers: {"Content-Type": "application/json"},
+    //find id of the user we're trying to delete
+    const id = characters.find((character, i) => i === index)["id"];          
+    console.log("id to delete: ", id);
+
+    const promise = fetch(`http://localhost:8000/users/${id}`, {
+    method: "DELETE"
     })
-    .then()
-
-    //delete from frontend...
-    console.log("removing from backend...");
-
-    //filter creates a new array with the elements that pass a given test
-    const updated = characters.filter(
-      //in this case, we return the array without "index"
-      (character, i) => {
-        return i !== index;
-      }
-    );
-    setCharacters(updated);
+    .then(async (response) => {
+      if (!response.ok){
+        throw new error(error);
+      } 
+      //delete from frontend if successful
+        console.log("removing from frontend...");
+        //filter creates a new array with the elements that pass a given test
+        setCharacters(characters.filter((user) =>user["id"] !== id));
+    })
+    .catch(error => console.log("Error deleting: ", error));
   }
 
   function fetchUsers(){
@@ -73,13 +73,6 @@ function MyApp() {
     return promise;
   }
 
-  function deleteUsers(id){
-    const promise = fetch("http//localhost:8000/users", {
-      method: "DELETE",
-      headers: {"Content-Type": "application/json"},
-    });
-    return promise;
-  }
 
   return (
       <div className= "containter"> 
