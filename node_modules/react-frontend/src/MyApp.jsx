@@ -12,7 +12,7 @@ function MyApp() {
 
   useEffect(() => {
     fetchUsers().then(res => res.json())
-                .then((json) =>setCharacters(json["users_list"]))
+                .then((json) =>setCharacters(json))
                 .catch((error) => {console.log(error);})
   }, [] );
 
@@ -37,10 +37,10 @@ function MyApp() {
   //difining removeOnecharacter here lets us be right ins cope to refer to characters and setCharacters
   function removeOneCharacter(index){
     //delete from backend...
-    console.log("removing from backend...");
+    console.log("removing from backend...\n");
 
     //find id of the user we're trying to delete
-    const id = characters.find((character, i) => i === index)["id"];          
+    const id = characters.find((character, i) => i === index)["_id"];          
     console.log("id to delete: ", id);
 
     const promise = fetch(`http://localhost:8000/users/${id}`, {
@@ -51,9 +51,9 @@ function MyApp() {
         throw new error(error);
       } 
       //delete from frontend if successful
-        console.log("removing from frontend...");
+        console.log("removing from frontend...\n");
         //filter creates a new array with the elements that pass a given test
-        setCharacters(characters.filter((user) =>user["id"] !== id));
+        setCharacters(characters.filter((user) =>user["_id"] !== id));
     })
     .catch(error => console.log("Error deleting: ", error));
   }

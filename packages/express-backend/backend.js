@@ -2,78 +2,40 @@
 import express, { response } from "express"; //Express works as an HTTP middleware, 
 // dispatching HTTP calls to the routes we define and sending back responses
 import cors from "cors"; //import CORS(Cross-Origine Resource Sharing)
-
+import mongoose from "mongoose";//Mongoose is used to connect to MongoDB servers
+import userModel from "./user.js";
 
 const app = express();
 const port = 8000; //port number we'll use to listen to incoming HTTP requests
+mongoose.set("debug", true);
+mongoose
+    .connect("mongodb://localhost:27017/users")
+    .catch((error) => console.log(error));
 
-let users = {
-    users_list: [
-        {
-        id: "xyz789",
-        name: "Charlie",
-        },
-        {
-            id: "abc123",
-            name: "Mac",
-            job: "Bouncer",
-        },
-        {
-            id: "ppp222",
-            name: "Mac",
-            job: "Professor"
-        },
-        {
-            id: "yat999",
-            name: "Dee",
-            job: "Aspiring actress"
-        },
-        {
-            id: "zap555",
-            name: "Dennis",
-            job: "Bartender"
-        }
-    ]
-};
-
-const addUser = (user) => {
+function addUsers(user){
     let id = Math.random() * 999999 //generate a user id
-    // let count = 0;
-    // while (findUsersById(id) !== undefined && count != 100 ){
-    //     id = Math.random() * 9999 //try again if the id exists
-    //     count++;
-    // }; 
     const newUser= {
         "id": id.toFixed(0),
         "name": user["name"],
         "job": user["job"],       
     }
-    users["users_list"].push(newUser);
-    return newUser;
-};
+    console.log(newUser);
+    const userToAdd = new userModel(newUser);
+    console.log(userToAdd);
+    const promise = userToAdd.save();
+    return promise;
+}
 
-const findUsersByName = (name) => {
-    console.log("finding user by name...")
-    return users["users_list"].filter(
-        (user) => user["name"] === name
-    );
-};
-
-const findUsersById = (id) => users["users_list"].find((user) => user["id"]===id);
-
-const deleteUser = (id)=> {
-    let findUser = users["users_list"].find((user) => user["id"]===id);
-    console.log("finding user: ", findUser);
-    if (findUser !== undefined){
-            users["users_list"]= users["users_list"].filter(
-                (user)=> user["id"] !== id
-            );
-            console.log("user deleted!")
-            return(users);
-    } else {
-        console.log("Couldn't find user!");
-        return undefined;
+function getUsers(name, job){
+    let promise;
+    if (name === undefined && job === undefined){
+        promise = userModel.find();
+    }else if (name && !job){
+        promise = userModel.find({name: name});
+    }else if (job && !name){
+        promise = userModel.find({job: job});
     }
+    return promise;
 };
 
 //setup app to allow Cross-Origin Resource Sharing (allows backend to respond to calls from a different origin (port))
@@ -92,56 +54,39 @@ app.get("/", (req, res) => { //first argument represents the request; second arg
 
 app.get("/users", (req, res)=>{
     const name = req.query.name;
-    const id = req.query.id;
-    if (name != undefined){
-        let result = findUsersByName(name);
-        result = {users_list:result};
-        console.log("user found!")
-        res.status(200).send(result);
-    }
-     else {
-    res.send(users);
-    }
+    const job = req.query.job;
+
+    let result = getUsers(name, job);
+    result.then((users)=>{
+        res.status(200).send(users);
+    }).catch((error) => {
+        res.status(500).send(error);
+    });
 });
 
 app.get("/users/:id", (req, res) => {
-    console.log("finding user by id...")
+    console.log("finding user by id...");
     const id = req.params.id;
     console.log(id);
-    let result = findUsersById(id);
-    if (result === undefined){
-        res.status(404).send("Resource not found.");
-    } else{
-        res.status(200).send(result);
-    }
-});
 
-//app.get("/users/:id", async (req, res) => {
-//    promise = new Promise(
-//        (fulfill, reject) => {
-//            let result = findUsersById(id);
-//            if (result === undefined){
-//                reject(res.status);
-//            }else fulfill(result);
-//        }
-//    )
-//    promise.then(
-//        (resultFred) => {
-//            res.send(resultFred);}
-//        ).catch (
-//            (errCode) =>{
-//                res.status(errCode).send("");
-//            }
-//        )
-//            
-//});
+    let newresult = userModel.findById(id);
+    newresult.then((result) => {
+        console.log(result);
+        res.status(200).send(result);
+    })
+    .catch((error)=> {
+        res.status(500).send('Server side error');
+    });
+});
 
 app.post("/users", (req, res)=> {
     const user = req.body;
     try{
-        const newUser = addUser(user);
-        console.log("New user added :", newUser);
-        res.status(201).send(newUser);
+        const newUser = addUsers(user);
+        newUser.then(async (result) => {
+            res.status(201).send(result);
+            }
+        ).catch(async(error) => (res.status(500).send("Error posting:", error)));
     }catch (error){
         console.log(error);
         res.status(500).send("Error posting:", error);
@@ -151,12 +96,19 @@ app.post("/users", (req, res)=> {
 app.delete("/users/:id", (req, res) =>{
     const userid = req.params.id
     console.log("attempting to delete: ",userid);
-    let result = deleteUser(userid);
-    console.log("Result: ", result);
-    if (result !== undefined){
-        res.status(204).send(users["users_list"]);
-    }else{
-        res.status(404).send("User not found.");
+
+    try{
+        let promise = userModel.deleteOne({_id: userid});
+        promise.then((result2)=> {
+            console.log("Result:", result2);
+            res.status(201).send(result2);``
+        }).catch((error)=>{
+            console.log(error);
+            res.status(404).send(error);
+        })
+    } catch(error){
+        console.log(error);
+        res.status(500).send(error);
     }
 });
 
