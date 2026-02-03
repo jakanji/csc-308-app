@@ -13,15 +13,7 @@ mongoose
     .catch((error) => console.log(error));
 
 function addUsers(user){
-    let id = Math.random() * 999999 //generate a user id
-    const newUser= {
-        "id": id.toFixed(0),
-        "name": user["name"],
-        "job": user["job"],       
-    }
-    console.log(newUser);
-    const userToAdd = new userModel(newUser);
-    console.log(userToAdd);
+    const userToAdd = new userModel(user);
     const promise = userToAdd.save();
     return promise;
 }
@@ -34,6 +26,8 @@ function getUsers(name, job){
         promise = userModel.find({name: name});
     }else if (job && !name){
         promise = userModel.find({job: job});
+    }else {
+        promise = userModel.find({name: name, job: job});
     }
     return promise;
 };
@@ -60,7 +54,7 @@ app.get("/users", (req, res)=>{
     result.then((users)=>{
         res.status(200).send(users);
     }).catch((error) => {
-        res.status(500).send(error);
+        res.status(500).send("Internal Server Error");
     });
 });
 
@@ -81,16 +75,11 @@ app.get("/users/:id", (req, res) => {
 
 app.post("/users", (req, res)=> {
     const user = req.body;
-    try{
-        const newUser = addUsers(user);
-        newUser.then(async (result) => {
-            res.status(201).send(result);
-            }
-        ).catch(async(error) => (res.status(500).send("Error posting:", error)));
-    }catch (error){
-        console.log(error);
-        res.status(500).send("Error posting:", error);
-    }
+    const newUser = addUsers(user);
+    newUser.then((result) => {
+        console.log(result);
+        res.status(201).send(result)}
+    ).catch((error) => (res.status(500).send("Error posting:", error)));
 });
 
 app.delete("/users/:id", (req, res) =>{
@@ -98,7 +87,7 @@ app.delete("/users/:id", (req, res) =>{
     console.log("attempting to delete: ",userid);
 
     try{
-        let promise = userModel.deleteOne({_id: userid});
+        let promise = userModel.findByIdAndDelete({_id: userid});
         promise.then((result2)=> {
             console.log("Result:", result2);
             res.status(201).send(result2);``
